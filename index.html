@@ -99,15 +99,14 @@
             options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#2a2a5e' } }, x: { grid: { display: false } } } }
         });
         function openRL() { window.open('reading_list.html', '_arxiv_reading_list'); }
+        // Reading list count comes from open GitHub issues labelled 'reading-list'
         document.addEventListener('DOMContentLoaded', () => {
-            const c = JSON.parse(localStorage.getItem('arxivReadingList') || '[]').length;
-            document.getElementById('rlCount').textContent = c;
-        });
-        window.addEventListener('message', e => {
-            if (e.data.type === 'arxiv_reading_list_sync_full') {
-                localStorage.setItem('arxivReadingList', JSON.stringify(e.data.list));
-                document.getElementById('rlCount').textContent = e.data.list.length;
-            }
+            fetch('https://api.github.com/repos/facero/arxiv-reports/issues?state=open&labels=reading-list&per_page=100', { cache: 'no-store' })
+                .then(r => r.ok ? r.json() : [])
+                .then(items => {
+                    document.getElementById('rlCount').textContent = items.filter(i => !i.pull_request).length;
+                })
+                .catch(() => {});
         });
     </script>
 </body>

@@ -7,55 +7,59 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #0f0f23; color: #e0e0e0; padding: 20px; max-width: 800px; margin: 0 auto; }
-        h1 { color: #fff; margin-bottom: 20px; }
+        h1 { color: #fff; margin-bottom: 6px; }
+        .subtitle { color: #8899aa; font-size: 0.85em; margin-bottom: 18px; }
         .paper { background: #1a1a3e; border: 1px solid #2a2a5e; border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .paper a { color: #85c1e9; text-decoration: none; flex: 1; }
-        .paper a:hover { text-decoration: underline; }
-        .paper .date { color: #8899aa; font-size: 0.8em; }
-        .remove-btn { background: transparent; border: 1px solid #e74c3c; color: #e74c3c; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
-        .remove-btn:hover { background: #e74c3c; color: white; }
-        .clear-btn { background: transparent; border: 1px solid #8899aa; color: #8899aa; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 0.85em; margin-bottom: 15px; }
+        .paper a.title { color: #85c1e9; text-decoration: none; flex: 1; }
+        .paper a.title:hover { text-decoration: underline; }
+        .paper .date { color: #8899aa; font-size: 0.8em; white-space: nowrap; }
+        .done-btn { background: transparent; border: 1px solid #27ae60; color: #82e0aa; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; text-decoration: none; white-space: nowrap; }
+        .done-btn:hover { background: #27ae60; color: white; }
+        .gh-btn { background: transparent; border: 1px solid #8899aa; color: #b0b8c8; padding: 8px 16px; border-radius: 5px; font-size: 0.85em; margin-bottom: 10px; text-decoration: none; display: inline-block; }
+        .gh-btn:hover { border-color: #5dade2; color: #85c1e9; }
         .empty { color: #8899aa; text-align: center; padding: 40px; }
+        .hint { color: #6c7a8a; font-size: 0.8em; margin-bottom: 15px; }
         .nav a { color: #85c1e9; text-decoration: none; display: inline-block; margin-bottom: 15px; }
     </style>
 </head>
 <body>
     <div class="nav"><a href="index.html">← Archive</a></div>
     <h1>📖 Reading List</h1>
-    <button class="clear-btn" onclick="clearAll()">🗑️ Clear All</button>
-    <div id="list"></div>
+    <div class="subtitle">Backed by GitHub Issues — synced across all your devices</div>
+    <a class="gh-btn" id="ghLink" href="#" target="_blank">🔗 Open on GitHub</a>
+    <div class="hint">Tap “✓ Done” to open the paper’s issue — close it there to remove it from this list.</div>
+    <div id="list"><div class="empty">Loading…</div></div>
     <script>
-        function render() {
-            const list = JSON.parse(localStorage.getItem('arxivReadingList') || '[]');
+        const REPO = 'facero/arxiv-reports';
+        const API = 'https://api.github.com/repos/' + REPO + '/issues?state=open&labels=reading-list&per_page=100';
+        document.getElementById('ghLink').href = 'https://github.com/' + REPO + '/issues?q=label%3Areading-list';
+        function paperUrl(body) {
+            const m = /(https?:\/\/arxiv\.org\/abs\/[^\s)]+)/.exec(body || '');
+            return m ? m[1] : null;
+        }
+        async function render() {
             const container = document.getElementById('list');
-            if (list.length === 0) {
-                container.innerHTML = '<div class="empty">Nothing saved yet. Open a monthly report and click "Save to Reading List".</div>';
-                return;
+            try {
+                const r = await fetch(API, { headers: { 'Accept': 'application/vnd.github+json' }, cache: 'no-store' });
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                const items = (await r.json()).filter(i => !i.pull_request);
+                if (!items.length) {
+                    container.innerHTML = '<div class="empty">Nothing saved yet.<br>Open a monthly report and click “📖 Save to Reading List”.</div>';
+                    return;
+                }
+                container.innerHTML = items.map(i => {
+                    const url = paperUrl(i.body) || i.html_url;
+                    const d = (i.created_at || '').slice(0, 10);
+                    return '<div class="paper">'
+                        + '<span class="date">' + d + '</span>'
+                        + '<a class="title" href="' + url + '" target="_blank">' + i.title + '</a>'
+                        + '<a class="done-btn" href="' + i.html_url + '" target="_blank" title="Open on GitHub to close">✓ Done</a>'
+                        + '</div>';
+                }).join('');
+            } catch (e) {
+                container.innerHTML = '<div class="empty">Could not load the list from GitHub (' + e.message + ').<br>'
+                    + '<a style="color:#85c1e9" href="https://github.com/' + REPO + '/issues?q=label%3Areading-list" target="_blank">Open it on GitHub</a>.</div>';
             }
-            container.innerHTML = list.map((p, i) =>
-                `<div class="paper">
-                    <span class="date">${p.date || ''}</span>
-                    <a href="${p.link}" target="_blank">${p.title}</a>
-                    <button class="remove-btn" onclick="remove(${i})">✕</button>
-                </div>`
-            ).join('');
-            sync();
-        }
-        function remove(i) {
-            let list = JSON.parse(localStorage.getItem('arxivReadingList') || '[]');
-            list.splice(i, 1);
-            localStorage.setItem('arxivReadingList', JSON.stringify(list));
-            render();
-        }
-        function clearAll() {
-            if (confirm('Clear all items?')) {
-                localStorage.removeItem('arxivReadingList');
-                render();
-            }
-        }
-        function sync() {
-            const list = JSON.parse(localStorage.getItem('arxivReadingList') || '[]');
-            window.opener && window.opener.postMessage({ type: 'arxiv_reading_list_sync_full', list }, '*');
         }
         render();
     </script>
