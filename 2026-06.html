@@ -70,6 +70,7 @@
         .nav a:hover { text-decoration: underline; }
         .chart-container { background: #1a1a3e; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #2a2a5e; }
         .card-actions { display: flex; gap: 10px; margin-top: 4px; }
+        .save-hint { background: #12203a; border: 1px solid #2a2a5e; border-left: 4px solid #27ae60; border-radius: 8px; padding: 10px 14px; margin-bottom: 18px; font-size: 0.85em; color: #a9c3d6; line-height: 1.5; }
         .hide-btn {
             background: transparent; border: 1px solid #6c3483; color: #a569bd;
             padding: 5px 12px; border-radius: 5px; cursor: pointer;
@@ -111,6 +112,8 @@
         </div>
         <button onclick="window.open('reading_list.html', '_arxiv_reading_list')" style="background:#6c3483; color:white; border:none; padding:10px 18px; border-radius:8px; cursor:pointer; font-size:0.9em;">📖 Reading List</button>
     </div>
+
+    <div class="save-hint">💡 <strong>Save to Reading List</strong> opens a prefilled GitHub issue — press <strong>Submit</strong> there and it syncs to all your devices. Close the issue to remove it.</div>
 
     <div class="stats">
         <div class="stat"><div class="num">198</div><div class="label">Papers Scored</div></div>
@@ -3914,15 +3917,17 @@
             }
         });
 
+        // Save to a permanent, cross-device reading list backed by GitHub Issues.
         function savePaper(id, title, link) {
-            let list = JSON.parse(localStorage.getItem('arxivReadingList') || '[]');
-            if (!list.find(p => p.id === id)) {
-                list.push({ id, title, link, date: new Date().toISOString().split('T')[0] });
-                localStorage.setItem('arxivReadingList', JSON.stringify(list));
-                alert('✅ Saved to reading list!');
-            } else {
-                alert('Already in your reading list.');
-            }
+            const repo = 'facero/arxiv-reports';
+            const today = new Date().toISOString().split('T')[0];
+            const body = '**Paper:** ' + title + '\n\n**arXiv:** ' + link +
+                         '\n\n**ID:** ' + id + '\n\n_Saved ' + today + ' from the arXiv report site._';
+            const url = 'https://github.com/' + repo + '/issues/new'
+                + '?title=' + encodeURIComponent(title)
+                + '&body=' + encodeURIComponent(body)
+                + '&labels=reading-list';
+            window.open(url, '_blank');
         }
 
         /* ---- Hide papers (no database, just localStorage) ---- */
