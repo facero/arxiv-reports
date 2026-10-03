@@ -42,17 +42,41 @@
             <button onclick="window.open('reading_list.html', '_arxiv_reading_list')" class="top-btn">📖 Reading List (<span id="rlCount">0</span>)</button>
         </div>
         <div class="stats-grid">
-            <div class="stat-card"><div class="number">2</div><div class="label">Months</div></div>
-            <div class="stat-card"><div class="number">247</div><div class="label">Papers Scored</div></div>
-            <div class="stat-card"><div class="number">123</div><div class="label">Avg/Month</div></div>
+            <div class="stat-card"><div class="number">5</div><div class="label">Months</div></div>
+            <div class="stat-card"><div class="number">467</div><div class="label">Papers Scored</div></div>
+            <div class="stat-card"><div class="number">93</div><div class="label">Avg/Month</div></div>
         </div>
         <div class="concept"><strong>🎯 Research Persona:</strong> Research interest in High Energy Astrophysics focusing on supernova remnants (both young and evolved) and their non-thermal emission mechanisms, pulsar wind nebulae with emission from radio to TeV energies, and galactic PeVatrons. Active with gamma-ray observatories (Fermi-LAT, HESS, CTA/LST-1) for spectral and morphological studies of SNRs and PWNe. Also engaged in X-ray analysis techniques (hyperspectral imaging, source separation with XMM-Newton, NuSTAR, Chandra) and multi-wavelength studies of supernova remnants, pulsars, and galaxy clusters.</div>
         <div class="month-list" id="monthList">
         <div class="month-item">
+            <div class="month-title">📅 October 2026</div>
+            <div class="month-stats">
+                <span>📊 6 papers</span>
+                <span>✅ 2 high relevance</span>
+            </div>
+            <a href="2026-10.html" class="view-btn">View →</a>
+        </div>
+        <div class="month-item">
+            <div class="month-title">📅 September 2026</div>
+            <div class="month-stats">
+                <span>📊 86 papers</span>
+                <span>✅ 13 high relevance</span>
+            </div>
+            <a href="2026-09.html" class="view-btn">View →</a>
+        </div>
+        <div class="month-item">
+            <div class="month-title">📅 August 2026</div>
+            <div class="month-stats">
+                <span>📊 66 papers</span>
+                <span>✅ 6 high relevance</span>
+            </div>
+            <a href="2026-08.html" class="view-btn">View →</a>
+        </div>
+        <div class="month-item">
             <div class="month-title">📅 July 2026</div>
             <div class="month-stats">
-                <span>📊 49 papers</span>
-                <span>✅ 0 high relevance</span>
+                <span>📊 111 papers</span>
+                <span>✅ 17 high relevance</span>
             </div>
             <a href="2026-07.html" class="view-btn">View →</a>
         </div>
@@ -67,8 +91,8 @@
         <div class="chart-container"><canvas id="trendChart"></canvas></div>
     </div>
     <script>
-        const labels = ["Jun 2026", "Jul 2026"];
-        const data = [198, 49];
+        const labels = ["Jun 2026", "Jul 2026", "Aug 2026", "Sep 2026", "Oct 2026"];
+        const data = [198, 111, 66, 86, 6];
         new Chart(document.getElementById('trendChart'), {
             type: 'line',
             data: { labels, datasets: [{ label: 'Papers/Month', data, borderColor: '#5dade2', backgroundColor: 'rgba(93,173,226,0.1)', tension: 0.4, fill: true }] },

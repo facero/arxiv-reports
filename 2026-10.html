@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArXiv Papers - October 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 { color: #fff; font-size: 1.8em; margin-bottom: 5px; }
+        .subtitle { color: #8899aa; margin-bottom: 20px; }
+        .header-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+        }
+        .stats {
+            display: flex; gap: 15px; flex-wrap: wrap;
+        }
+        .stat {
+            background: #1a1a3e; padding: 10px 18px; border-radius: 8px;
+            border: 1px solid #2a2a5e;
+        }
+        .stat .num { font-size: 1.4em; font-weight: bold; color: #5dade2; }
+        .stat .label { font-size: 0.8em; color: #8899aa; }
+        .concept { 
+            background: #1a1a3e; padding: 15px 20px; border-radius: 8px;
+            border-left: 4px solid #5dade2; margin-bottom: 20px;
+            font-size: 0.95em; line-height: 1.5;
+        }
+        .paper-card {
+            background: #1a1a3e; border-radius: 10px; padding: 18px 20px;
+            margin-bottom: 14px; border: 1px solid #2a2a5e;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .paper-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(93, 173, 226, 0.15);
+        }
+        .paper-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+        }
+        .rank { font-weight: bold; font-size: 1.1em; color: #5dade2; min-width: 32px; }
+        .score-bar {
+            height: 8px; border-radius: 4px; flex: 1; max-width: 200px;
+            transition: width 0.3s;
+        }
+        .score { font-weight: bold; font-size: 0.9em; color: #5dade2; min-width: 45px; text-align: right; }
+        .paper-title { font-size: 1.05em; font-weight: 600; margin-bottom: 6px; }
+        .paper-title a { color: #85c1e9; text-decoration: none; }
+        .paper-title a:hover { text-decoration: underline; }
+        .paper-meta { font-size: 0.8em; color: #8899aa; margin-bottom: 8px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .paper-abstract { font-size: 0.85em; color: #b0b8c8; line-height: 1.5; margin-bottom: 8px; }
+        .paper-reason { font-size: 0.85em; color: #82e0aa; padding: 8px 12px; background: #0d3b1e; border-radius: 6px; margin-bottom: 10px; }
+        .save-btn {
+            background: transparent; border: 1px solid #5dade2; color: #85c1e9;
+            padding: 5px 14px; border-radius: 5px; cursor: pointer;
+            font-size: 0.8em; transition: all 0.2s;
+        }
+        .save-btn:hover { background: #5dade2; color: #0f0f23; }
+        .nav { margin-bottom: 20px; }
+        .nav a { color: #85c1e9; text-decoration: none; }
+        .nav a:hover { text-decoration: underline; }
+        .chart-container { background: #1a1a3e; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #2a2a5e; }
+        .card-actions { display: flex; gap: 10px; margin-top: 4px; }
+        .hide-btn {
+            background: transparent; border: 1px solid #6c3483; color: #a569bd;
+            padding: 5px 12px; border-radius: 5px; cursor: pointer;
+            font-size: 0.8em; transition: all 0.2s;
+        }
+        .hide-btn:hover { background: #6c3483; color: white; }
+        .hidden-card { display: none !important; }
+        #hideBar {
+            position: sticky; top: 8px; z-index: 100;
+            display: none; align-items: center; justify-content: space-between;
+            background: #2a1a5e; border: 1px solid #6c3483; border-radius: 8px;
+            padding: 10px 16px; margin-bottom: 16px; gap: 10px; flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        #hideBarText { color: #c39bd3; font-size: 0.9em; }
+        .bar-btn {
+            background: transparent; border: 1px solid #a569bd; color: #c39bd3;
+            padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em;
+            transition: all 0.2s;
+        }
+        .bar-btn:hover { background: #6c3483; color: white; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="index.html">← Archive</a></div>
+
+    <div id="hideBar">
+        <span id="hideBarText"></span>
+        <div style="display:flex; gap:8px;">
+            <button id="undoHideBtn" class="bar-btn" title="Restore the last hidden paper">↩️ Undo</button>
+            <button id="restoreAllBtn" class="bar-btn">Restore all</button>
+        </div>
+    </div>
+
+    <div class="header-bar">
+        <div>
+            <h1>📄 October 2026</h1>
+            <div class="subtitle">High Energy Astrophysics - Scored by Minime</div>
+        </div>
+        <button onclick="window.open('reading_list.html', '_arxiv_reading_list')" style="background:#6c3483; color:white; border:none; padding:10px 18px; border-radius:8px; cursor:pointer; font-size:0.9em;">📖 Reading List</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat"><div class="num">6</div><div class="label">Papers Scored</div></div>
+        <div class="stat"><div class="num">2</div><div class="label">High Relevance (≥70)</div></div>
+        <div class="stat"><div class="num">3</div><div class="label">Medium (40-69)</div></div>
+        <div class="stat"><div class="num">1</div><div class="label">Low (&lt;40)</div></div>
+    </div>
+
+    <div class="concept"><strong>🎯 Research Persona:</strong> Research interest in High Energy Astrophysics focusing on supernova remnants (both young and evolved) and their non-thermal emission mechanisms, pulsar wind nebulae with emission from radio to TeV energies, and galactic PeVatrons. Active with gamma-ray observatories (Fermi-LAT, HESS, CTA/LST-1) for spectral and morphological studies of SNRs and PWNe. Also engaged in X-ray analysis techniques (hyperspectral imaging, source separation with XMM-Newton, NuSTAR, Chandra) and multi-wavelength studies of supernova remnants, pulsars, and galaxy clusters.</div>
+
+    <div class="chart-container">
+        <canvas id="scoreChart"></canvas>
+    </div>
+
+    <div id="papers">
+        
+        <div class="paper-card" data-id="2609.39731">
+            <div class="paper-header">
+                <span class="rank">#1</span>
+                <div class="score-bar" style="width: 93%; background: #27ae60;"></div>
+                <span class="score">93/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2609.39731" target="_blank">Deep radio characterization of the supernova remnant G343.1-00.7</a></div>
+            <div class="paper-meta">
+                <span>📝 S. Loru, A. Ingallinera, C. Trigilio, G. Umana, D. Urošević B. Arbutina</span>
+                <span>🏷️ astro-ph.GA, astro-ph.HE</span>
+                <span>🔗 2609.39731</span>
+            </div>
+            <div class="paper-abstract">Supernova remnants (SNRs) are extended radio sources whose morphology and evolution are shaped by the interaction of strong shocks with the surrounding medium. We combined the 0.944 GHz Australian Squ...</div>
+            <div class="paper-reason"><strong>Why relevant:</strong> Directly on-topic: resolved radio spectral/morphological study of an SNR, core persona subject.</div>
+            <div class="card-actions">
+                <button class="save-btn" onclick="savePaper('2609.39731', `Deep radio characterization of the supernova remnant G343.1-00.7`, 'https://arxiv.org/abs/2609.39731')">📖 Save to Reading List</button>
+                <button class="hide-btn" data-id="2609.39731" title="Hide this paper">✕ Hide</button>
+            </div>
+        </div>
+        <div class="paper-card" data-id="2610.00475">
+            <div class="paper-header">
+                <span class="rank">#2</span>
+                <div class="score-bar" style="width: 55%; background: #f39c12;"></div>
+                <span class="score">55/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2610.00475" target="_blank">NASA ASTRA White Paper : A Chandra Successor in the 2030s</a></div>
+            <div class="paper-meta">
+                <span>📝 C. S. Reynolds, E. Hodges-Kluck, E. A. Kara, M. Koss, K. Madsen</span>
+                <span>🏷️ astro-ph.IM, astro-ph.HE</span>
+                <span>🔗 2610.00475</span>
+            </div>
+            <div class="paper-abstract">Chandra established that soft X-ray spectral imaging with approximately 1 arcsec angular resolution is an essential tool for almost every area of astrophysics, from the early Universe to ice chemistry...</div>
+            <div class="paper-reason"><strong>Why relevant:</strong> X-ray observatory white paper; relevant to Chandra/X-ray analysis techniques though not SNR/PWN specific.</div>
+            <div class="card-actions">
+                <button class="save-btn" onclick="savePaper('2610.00475', `NASA ASTRA White Paper : A Chandra Successor in the 2030s`, 'https://arxiv.org/abs/2610.00475')">📖 Save to Reading List</button>
+                <button class="hide-btn" data-id="2610.00475" title="Hide this paper">✕ Hide</button>
+            </div>
+        </div>
+        <div class="paper-card" data-id="2512.23231">
+            <div class="paper-header">
+                <span class="rank">#3</span>
+                <div class="score-bar" style="width: 62%; background: #f39c12;"></div>
+                <span class="score">62/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2512.23231" target="_blank">Unveiling Multimessenger Emission from Hidden Cores of Microquasars</a></div>
+            <div class="paper-meta">
+                <span>📝 Yu-Jia Wei, Kohta Murase, B. Theodore Zhang</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2512.23231</span>
+            </div>
+            <div class="paper-abstract">Microquasars are radio-emitting X-ray binaries with relativistic jets and are established sources of $\sim 100$~TeV gamma rays, making them promising candidates for cosmic-ray acceleration. Motivated ...</div>
+            <div class="paper-reason"><strong>Why relevant:</strong> Microquasar multimessenger gamma-ray modeling; related high-energy astrophysics, links to PeVatron particle acceleration.</div>
+            <div class="card-actions">
+                <button class="save-btn" onclick="savePaper('2512.23231', `Unveiling Multimessenger Emission from Hidden Cores of Microquasars`, 'https://arxiv.org/abs/2512.23231')">📖 Save to Reading List</button>
+                <button class="hide-btn" data-id="2512.23231" title="Hide this paper">✕ Hide</button>
+            </div>
+        </div>
+        <div class="paper-card" data-id="2608.28507">
+            <div class="paper-header">
+                <span class="rank">#4</span>
+                <div class="score-bar" style="width: 35%; background: #e74c3c;"></div>
+                <span class="score">35/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2608.28507" target="_blank">Relativistic outflows power a quasi-periodic eruption: constraints on energetics, mass loss, and emission mechanisms</a></div>
+            <div class="paper-meta">
+                <span>📝 Joheen Chakraborty, Erin Kara, Wenbin Lu, Brian D. Metzger, Peter Kosec</span>
+                <span>🏷️ astro-ph.HE, astro-ph.GA</span>
+                <span>🔗 2608.28507</span>
+            </div>
+            <div class="paper-abstract">Quasi-periodic eruptions (QPEs) are recurring bursts of X-ray radiation originating from supermassive black holes (SMBHs). They are an unprecedented type of structured, high-amplitude SMBH variability...</div>
+            <div class="paper-reason"><strong>Why relevant:</strong> XMM-Newton X-ray spectroscopy of SMBH QPEs; tangential technique overlap, topic far from SNRs/PWNe.</div>
+            <div class="card-actions">
+                <button class="save-btn" onclick="savePaper('2608.28507', `Relativistic outflows power a quasi-periodic eruption: constraints on energetics, mass loss, and emission mechanisms`, 'https://arxiv.org/abs/2608.28507')">📖 Save to Reading List</button>
+                <button class="hide-btn" data-id="2608.28507" title="Hide this paper">✕ Hide</button>
+            </div>
+        </div>
+        <div class="paper-card" data-id="2610.01211">
+            <div class="paper-header">
+                <span class="rank">#5</span>
+                <div class="score-bar" style="width: 80%; background: #27ae60;"></div>
+                <span class="score">80/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2610.01211" target="_blank">Chemical complexity in feedback from supernova remnants: first detection of PO+ in IC443 and W44</a></div>
+            <div class="paper-meta">
+                <span>📝 G. Cosentino, F. Priestley, S. Scibelli, F. Fontani</span>
+                <span>🏷️ astro-ph.GA, astro-ph.HE, astro-ph.SR</span>
+                <span>🔗 2610.01211</span>
+            </div>
+            <div class="paper-abstract">Supernova remnant (SNR) may shape the physical and chemical properties of star formation. By releasing refractory elements into the gas phase, they inject material of pre-biotic relevance into molecul...</div>
+            <div class="paper-reason"><strong>Why relevant:</strong> SNR shock chemistry toward W44 and IC443; directly SNR-focused multi-wavelength study.</div>
+            <div class="card-actions">
+                <button class="save-btn" onclick="savePaper('2610.01211', `Chemical complexity in feedback from supernova remnants: first detection of PO+ in IC443 and W44`, 'https://arxiv.org/abs/2610.01211')">📖 Save to Reading List</button>
+                <button class="hide-btn" data-id="2610.01211" title="Hide this paper">✕ Hide</button>
+            </div>
+        </div>
+        <div class="paper-card" data-id="2609.38321">
+            <div class="paper-header">
+                <span class="rank">#6</span>
+                <div class="score-bar" style="width: 52%; background: #f39c12;"></div>
+                <span class="score">52/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2609.38321" target="_blank">An X-ray Extremely wide-field Spectroscopic Surveyor (XESS, or "chess")</a></div>
+            <div class="paper-meta">
+                <span>📝 W. P. Maksym, M. Ulmer, S. Friedrich, F. Tombesi, R. Arcodia</span>
+                <span>🏷️ astro-ph.IM, astro-ph.GA, astro-ph.HE</span>
+                <span>🔗 2609.38321</span>
+            </div>
+            <div class="paper-abstract">We propose an X-ray observatory, the X-ray Extremely wide-field Spectroscopic Surveyor (XESS, pronounced "Chess") to bring high energy resolution X-ray spectroscopy into the era of synoptic surveys an...</div>
+            <div class="paper-reason"><strong>Why relevant:</strong> Proposed X-ray spectroscopy surveyor; relevant to X-ray instrumentation/TDAMM, only indirectly on-topic.</div>
+            <div class="card-actions">
+                <button class="save-btn" onclick="savePaper('2609.38321', `An X-ray Extremely wide-field Spectroscopic Surveyor (XESS, or "chess")`, 'https://arxiv.org/abs/2609.38321')">📖 Save to Reading List</button>
+                <button class="hide-btn" data-id="2609.38321" title="Hide this paper">✕ Hide</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scores = [93, 55, 62, 35, 80, 52];
+        new Chart(document.getElementById('scoreChart'), {
+            type: 'bar',
+            data: {
+                labels: scores.map((_, i) => '#' + (i+1)),
+                datasets: [{
+                    label: 'Relevance Score',
+                    data: scores,
+                    backgroundColor: scores.map(s => s >= 70 ? '#27ae60' : s >= 40 ? '#f39c12' : '#e74c3c'),
+                    borderRadius: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, max: 100, grid: { color: '#2a2a5e' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        function savePaper(id, title, link) {
+            let list = JSON.parse(localStorage.getItem('arxivReadingList') || '[]');
+            if (!list.find(p => p.id === id)) {
+                list.push({ id, title, link, date: new Date().toISOString().split('T')[0] });
+                localStorage.setItem('arxivReadingList', JSON.stringify(list));
+                alert('✅ Saved to reading list!');
+            } else {
+                alert('Already in your reading list.');
+            }
+        }
+
+        /* ---- Hide papers (no database, just localStorage) ---- */
+        const HIDE_KEY = 'arxivHidden';
+        let hidden = JSON.parse(localStorage.getItem(HIDE_KEY) || '[]');
+        let lastHiddenId = null;
+        const hideBar = document.getElementById('hideBar');
+        const hideBarText = document.getElementById('hideBarText');
+        const restoreAllBtn = document.getElementById('restoreAllBtn');
+
+        function getCard(id) {
+            const cards = document.querySelectorAll('.paper-card');
+            for (const c of cards) if (c.dataset.id === id) return c;
+            return null;
+        }
+
+        function refreshHideBar(msg) {
+            if (!hideBar) return;
+            hideBarText.textContent = msg || (hidden.length ? `🗑️ ${hidden.length} hidden paper(s) on this browser` : '');
+            restoreAllBtn.textContent = `Restore all (${hidden.length})`;
+            hideBar.style.display = (hidden.length > 0 || msg) ? 'flex' : 'none';
+        }
+
+        function hidePaper(id) {
+            if (!id || hidden.includes(id)) return;
+            hidden.push(id);
+            localStorage.setItem(HIDE_KEY, JSON.stringify(hidden));
+            const card = getCard(id);
+            if (card) card.classList.add('hidden-card');
+            lastHiddenId = id;
+            refreshHideBar('🗑️ Paper hidden');
+        }
+
+        document.addEventListener('click', e => {
+            const btn = e.target.closest('.hide-btn');
+            if (btn) hidePaper(btn.dataset.id);
+        });
+
+        document.getElementById('undoHideBtn').addEventListener('click', () => {
+            if (!lastHiddenId) return;
+            hidden = hidden.filter(id => id !== lastHiddenId);
+            localStorage.setItem(HIDE_KEY, JSON.stringify(hidden));
+            const card = getCard(lastHiddenId);
+            if (card) card.classList.remove('hidden-card');
+            lastHiddenId = null;
+            if (hidden.length) refreshHideBar('↩️ Paper restored');
+            else { hideBar.style.display = 'none'; }
+        });
+
+        restoreAllBtn.addEventListener('click', () => {
+            hidden.forEach(id => {
+                const card = getCard(id);
+                if (card) card.classList.remove('hidden-card');
+            });
+            hidden = [];
+            lastHiddenId = null;
+            localStorage.removeItem(HIDE_KEY);
+            hideBar.style.display = 'none';
+        });
+
+        // Apply previously hidden papers on load
+        hidden.forEach(id => {
+            const card = getCard(id);
+            if (card) card.classList.add('hidden-card');
+        });
+        if (hidden.length) refreshHideBar();
+    </script>
+</body>
+</html>
