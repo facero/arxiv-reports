@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArXiv Papers - July 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 { color: #fff; font-size: 1.8em; margin-bottom: 5px; }
+        .subtitle { color: #8899aa; margin-bottom: 20px; }
+        .header-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+        }
+        .stats {
+            display: flex; gap: 15px; flex-wrap: wrap;
+        }
+        .stat {
+            background: #1a1a3e; padding: 10px 18px; border-radius: 8px;
+            border: 1px solid #2a2a5e;
+        }
+        .stat .num { font-size: 1.4em; font-weight: bold; color: #5dade2; }
+        .stat .label { font-size: 0.8em; color: #8899aa; }
+        .concept { 
+            background: #1a1a3e; padding: 15px 20px; border-radius: 8px;
+            border-left: 4px solid #5dade2; margin-bottom: 20px;
+            font-size: 0.95em; line-height: 1.5;
+        }
+        .paper-card {
+            background: #1a1a3e; border-radius: 10px; padding: 18px 20px;
+            margin-bottom: 14px; border: 1px solid #2a2a5e;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .paper-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(93, 173, 226, 0.15);
+        }
+        .paper-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+        }
+        .rank { font-weight: bold; font-size: 1.1em; color: #5dade2; min-width: 32px; }
+        .score-bar {
+            height: 8px; border-radius: 4px; flex: 1; max-width: 200px;
+            transition: width 0.3s;
+        }
+        .score { font-weight: bold; font-size: 0.9em; color: #5dade2; min-width: 45px; text-align: right; }
+        .paper-title { font-size: 1.05em; font-weight: 600; margin-bottom: 6px; }
+        .paper-title a { color: #85c1e9; text-decoration: none; }
+        .paper-title a:hover { text-decoration: underline; }
+        .paper-meta { font-size: 0.8em; color: #8899aa; margin-bottom: 8px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .paper-abstract { font-size: 0.85em; color: #b0b8c8; line-height: 1.5; margin-bottom: 8px; }
+        .paper-reason { font-size: 0.85em; color: #82e0aa; padding: 8px 12px; background: #0d3b1e; border-radius: 6px; margin-bottom: 10px; }
+        .save-btn {
+            background: transparent; border: 1px solid #5dade2; color: #85c1e9;
+            padding: 5px 14px; border-radius: 5px; cursor: pointer;
+            font-size: 0.8em; transition: all 0.2s;
+        }
+        .save-btn:hover { background: #5dade2; color: #0f0f23; }
+        .nav { margin-bottom: 20px; }
+        .nav a { color: #85c1e9; text-decoration: none; }
+        .nav a:hover { text-decoration: underline; }
+        .chart-container { background: #1a1a3e; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #2a2a5e; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="index.html">← Archive</a></div>
+    <div class="header-bar">
+        <div>
+            <h1>📄 July 2026</h1>
+            <div class="subtitle">High Energy Astrophysics - Scored by Minime</div>
+        </div>
+        <button onclick="window.open('reading_list.html', '_arxiv_reading_list')" style="background:#6c3483; color:white; border:none; padding:10px 18px; border-radius:8px; cursor:pointer; font-size:0.9em;">📖 Reading List</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat"><div class="num">49</div><div class="label">Papers Scored</div></div>
+        <div class="stat"><div class="num">0</div><div class="label">High Relevance (≥70)</div></div>
+        <div class="stat"><div class="num">0</div><div class="label">Medium (40-69)</div></div>
+        <div class="stat"><div class="num">49</div><div class="label">Low (&lt;40)</div></div>
+    </div>
+
+    <div class="concept"><strong>🎯 Research Persona:</strong> Research interest in High Energy Astrophysics focusing on supernova remnants (both young and evolved) and their non-thermal emission mechanisms, pulsar wind nebulae with emission from radio to TeV energies, and galactic PeVatrons. Active with gamma-ray observatories (Fermi-LAT, HESS, CTA/LST-1) for spectral and morphological studies of SNRs and PWNe. Also engaged in X-ray analysis techniques (hyperspectral imaging, source separation with XMM-Newton, NuSTAR, Chandra) and multi-wavelength studies of supernova remnants, pulsars, and galaxy clusters.</div>
+
+    <div class="chart-container">
+        <canvas id="scoreChart"></canvas>
+    </div>
+
+    <div id="papers">
+        
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#1</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2605.15359" target="_blank">Population synthesis of Galactic middle-aged pulsar wind nebulae I. Detection prospects for current and future instruments</a></div>
+            <div class="paper-meta">
+                <span>📝 A. De Sarkar, D. F. Torres, B. Olmi, N. Bucciantini, D. M. -A. Meyer</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2605.15359</span>
+            </div>
+            <div class="paper-abstract">Pulsar wind nebulae (PWNe) constitute the largest population of Galactic very-high-energy (VHE; $E > 100$ GeV) $γ$-ray sources and are key laboratories for studying particle acceleration and pulsar--s...</div>
+            
+            <button class="save-btn" onclick="savePaper('2605.15359', `Population synthesis of Galactic middle-aged pulsar wind nebulae I. Detection prospects for current and future instruments`, 'https://arxiv.org/abs/2605.15359')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#2</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.17690" target="_blank">A catalogue of TeV pulsar environments</a></div>
+            <div class="paper-meta">
+                <span>📝 Tina Wach, Tim Linden, Alison M. W. Mitchell, Samuel T. Spencer</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2606.17690</span>
+            </div>
+            <div class="paper-abstract">Pulsars and their environments represent a major class of Galactic gamma-ray sources. Their complex evolution, shaped by the interactions of the pulsar outflow with the supernova remnant (SNR) and the...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.17690', `A catalogue of TeV pulsar environments`, 'https://arxiv.org/abs/2606.17690')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#3</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2602.14764" target="_blank">Pulsar based modeling of point spread function of Fermi Large Area Telescope</a></div>
+            <div class="paper-meta">
+                <span>📝 J. Blunier, A. Neronov, D. Semikoz</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2602.14764</span>
+            </div>
+            <div class="paper-abstract">Sensitivity of searches for extended emission around gamma-ray sources is naturally limited by the precision of the knowledge of the Point Spread Function (PSF) of gamma-ray telescopes. Inaccuracies i...</div>
+            
+            <button class="save-btn" onclick="savePaper('2602.14764', `Pulsar based modeling of point spread function of Fermi Large Area Telescope`, 'https://arxiv.org/abs/2602.14764')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#4</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2511.07066" target="_blank">Analysis and implications of the spatio-spectral morphology of the Fermi Bubbles</a></div>
+            <div class="paper-meta">
+                <span>📝 Ami Tank, Roland Crocker, Mark R. Krumholz</span>
+                <span>🏷️ astro-ph.HE, astro-ph.GA</span>
+                <span>🔗 2511.07066</span>
+            </div>
+            <div class="paper-abstract">The Fermi Bubbles are gamma-ray structures extending from the center of the Milky Way to +/-50 degree Galactic latitude that were discovered in data obtained by the Fermi/LAT instrument. Their origin ...</div>
+            
+            <button class="save-btn" onclick="savePaper('2511.07066', `Analysis and implications of the spatio-spectral morphology of the Fermi Bubbles`, 'https://arxiv.org/abs/2511.07066')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#5</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2607.04666" target="_blank">Observational Study of Multi-wavelength Synergistic Effects in 3C 120</a></div>
+            <div class="paper-meta">
+                <span>📝 Yuting He, Ming Zhang, Qi Yuan, Nenghui Liao</span>
+                <span>🏷️ astro-ph.GA, astro-ph.HE</span>
+                <span>🔗 2607.04666</span>
+            </div>
+            <div class="paper-abstract">The energy dissipation and particle acceleration mechanisms within relativistic jets remain fundamental questions in active galactic nuclei (AGN) research. In this paper, we present a comprehensive 13...</div>
+            
+            <button class="save-btn" onclick="savePaper('2607.04666', `Observational Study of Multi-wavelength Synergistic Effects in 3C 120`, 'https://arxiv.org/abs/2607.04666')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#6</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2411.08525" target="_blank">The study of an interaction between the jet and an interstellar medium around knot E and knot F of radio galaxy M87 by Chandra</a></div>
+            <div class="paper-meta">
+                <span>📝 S. Osone</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2411.08525</span>
+            </div>
+            <div class="paper-abstract">The jet may compress an interstellar medium and soft X-ray outside the jet may be absorbed by a compressed interstellar medium and thermal emission heated by a shock is expected inside the jet. I anal...</div>
+            
+            <button class="save-btn" onclick="savePaper('2411.08525', `The study of an interaction between the jet and an interstellar medium around knot E and knot F of radio galaxy M87 by Chandra`, 'https://arxiv.org/abs/2411.08525')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#7</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2602.08223" target="_blank">A Minimal Interpretation of the Galactic Cosmic-Ray Proton and Helium Spectra from GeV to PeV Energies</a></div>
+            <div class="paper-meta">
+                <span>📝 Felix Aharonian, Bing Theodore Zhang</span>
+                <span>🏷️ astro-ph.HE, astro-ph.SR</span>
+                <span>🔗 2602.08223</span>
+            </div>
+            <div class="paper-abstract">High-precision measurements of the cosmic-ray (CR) proton and helium spectra have revealed significant deviations from a simple power law, characterized by multiple spectral features, including a hard...</div>
+            
+            <button class="save-btn" onclick="savePaper('2602.08223', `A Minimal Interpretation of the Galactic Cosmic-Ray Proton and Helium Spectra from GeV to PeV Energies`, 'https://arxiv.org/abs/2602.08223')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#8</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.09992" target="_blank">EP260321a/SN 2026gzf: The Faintest Shock Breakout Associated with a Broad-Lined Supernova</a></div>
+            <div class="paper-meta">
+                <span>📝 Brendan O'Connor, Xander J. Hall, Malte Busmann, Daniel Gruen, Alberto Floris</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2606.09992</span>
+            </div>
+            <div class="paper-abstract">The explosion of a star is first marked by the shock wave breaking out of the stellar surface, producing a burst of ultraviolet and X-ray radiation. These events are observationally rare, despite like...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.09992', `EP260321a/SN 2026gzf: The Faintest Shock Breakout Associated with a Broad-Lined Supernova`, 'https://arxiv.org/abs/2606.09992')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#9</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.25607" target="_blank">Evolved massive stars and their impact on their environment</a></div>
+            <div class="paper-meta">
+                <span>📝 C. S. Buemi, G. Umana, C. Trigilio, C. Bordiu, F. Bufano</span>
+                <span>🏷️ astro-ph.SR, astro-ph.HE</span>
+                <span>🔗 2606.25607</span>
+            </div>
+            <div class="paper-abstract">The comprehension of the final stages of massive star evolution and their path toward the eventual supernova explosion necessarily involves the study of stellar winds and the circumstellar environment...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.25607', `Evolved massive stars and their impact on their environment`, 'https://arxiv.org/abs/2606.25607')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#10</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.25932" target="_blank">Using SKA-Low to Detect PeV Gamma-rays from Galactic Sources</a></div>
+            <div class="paper-meta">
+                <span>📝 Anna Nelles, Philipp Laub, Haoning He, Felix Schlüter, Sjoerd Bouma</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2606.25932</span>
+            </div>
+            <div class="paper-abstract">Detecting so called PeVatrons is considered one of the prime goals of $γ$-ray astronomy. PeVatrons are astrophysical objects in the Galaxy that are sources of cosmic rays exceeding PeV ($10^{15}$ eV) ...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.25932', `Using SKA-Low to Detect PeV Gamma-rays from Galactic Sources`, 'https://arxiv.org/abs/2606.25932')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#11</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2605.07777" target="_blank">Young Massive Star Clusters as TeV Emitters: Constraints from H.E.S.S. and LHAASO</a></div>
+            <div class="paper-meta">
+                <span>📝 Rowan Batzofin, Pierre Cristofari, Kathrin Egberts</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2605.07777</span>
+            </div>
+            <div class="paper-abstract">Young massive star clusters (YMSCs) have been proposed as excellent candidates for the main sources of Galactic cosmic rays (CRs) up to the PeV range. The detection and study of gamma rays in the very...</div>
+            
+            <button class="save-btn" onclick="savePaper('2605.07777', `Young Massive Star Clusters as TeV Emitters: Constraints from H.E.S.S. and LHAASO`, 'https://arxiv.org/abs/2605.07777')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#12</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.25054" target="_blank">Extreme PeV accelerator associated with GRS 1915+105</a></div>
+            <div class="paper-meta">
+                <span>📝 Zhen Cao, F. Aharonian, Y. X. Bai, Y. W. Bao, D. Bastieri</span>
+                <span>🏷️ astro-ph.HE, hep-ex</span>
+                <span>🔗 2606.25054</span>
+            </div>
+            <div class="paper-abstract">Microquasars, binary systems featuring relativistic jets, have emerged as sources for particle acceleration beyond PeV energies. We present a study of the broadband $γ$-ray emission from one of the mo...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.25054', `Extreme PeV accelerator associated with GRS 1915+105`, 'https://arxiv.org/abs/2606.25054')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#13</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.13128" target="_blank">Multi-Epoch X-Ray Detection of SLSN-I 2018bsz: Constraints on the Powering Mechanism and Ejecta Structure</a></div>
+            <div class="paper-meta">
+                <span>📝 Julia Ahlvind, Josefin Larsson, Dennis Alp, Ragnhild Lunnan</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2606.13128</span>
+            </div>
+            <div class="paper-abstract">SN 2018bsz is the closest known stripped superluminous supernova (SLSN-I) to date, making it an ideal laboratory for investigating the physical mechanisms powering this class of extreme explosions. We...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.13128', `Multi-Epoch X-Ray Detection of SLSN-I 2018bsz: Constraints on the Powering Mechanism and Ejecta Structure`, 'https://arxiv.org/abs/2606.13128')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#14</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2509.15851" target="_blank">Observation of Galactic center in the sub-MeV gamma-ray band with electron-tracking Compton camera</a></div>
+            <div class="paper-meta">
+                <span>📝 Tomonori Ikeda, Toru Tanimori, Atsushi Takada, Taito Takemura, Kei Yoshikawa</span>
+                <span>🏷️ astro-ph.HE, hep-ex</span>
+                <span>🔗 2509.15851</span>
+            </div>
+            <div class="paper-abstract">We report the direct detection of gamma-ray emission from the Galactic center in the 150-600 keV band using the electron-tracking Compton camera (ETCC), which has a wide field of view of 3.1 sr. This ...</div>
+            
+            <button class="save-btn" onclick="savePaper('2509.15851', `Observation of Galactic center in the sub-MeV gamma-ray band with electron-tracking Compton camera`, 'https://arxiv.org/abs/2509.15851')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#15</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2603.16714" target="_blank">The long-term accretion luminosity of V4641 Sgr through binary evolution simulations: implications for its ultrahigh-energy gamma-ray emission</a></div>
+            <div class="paper-meta">
+                <span>📝 Ruo-Yu Liu, Yong Shao, Yu-Dong Nie</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2603.16714</span>
+            </div>
+            <div class="paper-abstract">Recent observations by LHAASO and HAWC have revealed extended ultrahigh-energy (UHE; $E>100$ TeV) gamma-ray emission associated with the black-hole X-ray binary (BHXRB) V4641 Sgr, with a spectrum exte...</div>
+            
+            <button class="save-btn" onclick="savePaper('2603.16714', `The long-term accretion luminosity of V4641 Sgr through binary evolution simulations: implications for its ultrahigh-energy gamma-ray emission`, 'https://arxiv.org/abs/2603.16714')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#16</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2601.03372" target="_blank">Multiwavelength Modeling of the Luminous Fast Blue Optical Transient AT2024wpp</a></div>
+            <div class="paper-meta">
+                <span>📝 Conor M. B. Omand, Nikhil Sarin, Gavin P. Lamb, Daniel A. Perley, Andrew Mummery</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2601.03372</span>
+            </div>
+            <div class="paper-abstract">Luminous fast blue optical transients (LFBOTs) are a growing class of enigmatic energetic transients. They show fast rises and declines, high temperatures throughout their evolution, and non-thermal e...</div>
+            
+            <button class="save-btn" onclick="savePaper('2601.03372', `Multiwavelength Modeling of the Luminous Fast Blue Optical Transient AT2024wpp`, 'https://arxiv.org/abs/2601.03372')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#17</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2602.00691" target="_blank">Prospects for the detection of gamma rays using Cherenkov telescopes enhanced by a ground array observatory</a></div>
+            <div class="paper-meta">
+                <span>📝 C. Alispach, A. Araudo, A. Bakalová, M. Balbo, V. Beshley</span>
+                <span>🏷️ astro-ph.IM, astro-ph.HE</span>
+                <span>🔗 2602.00691</span>
+            </div>
+            <div class="paper-abstract">We study through detailed simulated data and their optimized analysis the expected performance of the Single-Mirror Small-Size imaging atmospheric Cherenkov Telescopes (SST-1M) potentially located ins...</div>
+            
+            <button class="save-btn" onclick="savePaper('2602.00691', `Prospects for the detection of gamma rays using Cherenkov telescopes enhanced by a ground array observatory`, 'https://arxiv.org/abs/2602.00691')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#18</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2510.22112" target="_blank">Coronal Mass Ejections from Young Suns: Insights from Solar and Stellar Observations and Models</a></div>
+            <div class="paper-meta">
+                <span>📝 Kosuke Namekata</span>
+                <span>🏷️ astro-ph.SR, astro-ph.EP, astro-ph.HE</span>
+                <span>🔗 2510.22112</span>
+            </div>
+            <div class="paper-abstract">Recent discoveries have revealed exoplanets orbiting young Sun-like stars, offering a window into the early solar system. These young stars frequently produce extreme magnetic explosions known as supe...</div>
+            
+            <button class="save-btn" onclick="savePaper('2510.22112', `Coronal Mass Ejections from Young Suns: Insights from Solar and Stellar Observations and Models`, 'https://arxiv.org/abs/2510.22112')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#19</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2603.28885" target="_blank">Survey of compact sources for pulsars and exotic objects -- I. Overview and initial discoveries</a></div>
+            <div class="paper-meta">
+                <span>📝 Yogesh Maan, Apurba Bera, Dharam Vir Lal, Yash Bhusare, Preeti Kharb</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2603.28885</span>
+            </div>
+            <div class="paper-abstract">Targeted searches for pulsars based on their counterparts in radio images have resulted in the discovery of interesting pulsars including the first ever discovered millisecond pulsar (MSP). Here, we r...</div>
+            
+            <button class="save-btn" onclick="savePaper('2603.28885', `Survey of compact sources for pulsars and exotic objects -- I. Overview and initial discoveries`, 'https://arxiv.org/abs/2603.28885')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#20</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2604.18703" target="_blank">SAETASS: Solver for Astroparticle Equation of Transport Analysis in Spherical Symmetry</a></div>
+            <div class="paper-meta">
+                <span>📝 José María García-Morillo, Stefano Menchiari, Rubén López-Coto</span>
+                <span>🏷️ astro-ph.HE, astro-ph.IM</span>
+                <span>🔗 2604.18703</span>
+            </div>
+            <div class="paper-abstract">In order to model astrophysical environments characterized by radial stratification, such as supernova remnants or expanding superbubbles; correctly understanding the transport of non-thermal particle...</div>
+            
+            <button class="save-btn" onclick="savePaper('2604.18703', `SAETASS: Solver for Astroparticle Equation of Transport Analysis in Spherical Symmetry`, 'https://arxiv.org/abs/2604.18703')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#21</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2607.04901" target="_blank">FRANZ: Framework for analytical one-zone blastwave dynamics</a></div>
+            <div class="paper-meta">
+                <span>📝 Leonard E. C. Romano</span>
+                <span>🏷️ astro-ph.GA, astro-ph.HE</span>
+                <span>🔗 2607.04901</span>
+            </div>
+            <div class="paper-abstract">(abridged) We develop a flexible analytical framework for modeling blastwave evolution in arbitrary environments and use it to investigate how large-scale galactic structure affects the dynamics and m...</div>
+            
+            <button class="save-btn" onclick="savePaper('2607.04901', `FRANZ: Framework for analytical one-zone blastwave dynamics`, 'https://arxiv.org/abs/2607.04901')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#22</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2603.10870" target="_blank">X-ray polarization in the soft state of Cyg X-1</a></div>
+            <div class="paper-meta">
+                <span>📝 A. Niedzwiecki, M. Szanecki, A. Veledina, A. A. Zdziarski, A. Chakraborty</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2603.10870</span>
+            </div>
+            <div class="paper-abstract">We aim to identify the physical mechanism responsible for the observed X-ray emission and polarization of Cyg X-1 in the soft state. We performed a detailed spectral analysis of X-ray data obtained wi...</div>
+            
+            <button class="save-btn" onclick="savePaper('2603.10870', `X-ray polarization in the soft state of Cyg X-1`, 'https://arxiv.org/abs/2603.10870')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#23</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2607.06313" target="_blank">Kinetic structure of the intracluster medium across nearby clusters observed with XRISM</a></div>
+            <div class="paper-meta">
+                <span>📝 Naomi Ota, Erwin T. Lau, Satoshi Yamada, Yuki Omiya, Hiroya Yamaguchi</span>
+                <span>🏷️ astro-ph.CO, astro-ph.GA, astro-ph.HE</span>
+                <span>🔗 2607.06313</span>
+            </div>
+            <div class="paper-abstract">XRISM/Resolve is building a sample of galaxy clusters with directly measured ICM gas motions, revealing diverse projected dynamical states. We compile 45 XRISM/Resolve measurements in 19 nearby galaxy...</div>
+            
+            <button class="save-btn" onclick="savePaper('2607.06313', `Kinetic structure of the intracluster medium across nearby clusters observed with XRISM`, 'https://arxiv.org/abs/2607.06313')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#24</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2602.12647" target="_blank">Ballistic Surfing Acceleration as a Coherent Mechanism for Electron Acceleration in Galaxy Cluster Shocks</a></div>
+            <div class="paper-meta">
+                <span>📝 Ji-Hoon Ha, Krzysztof Stasiewicz</span>
+                <span>🏷️ astro-ph.HE, physics.plasm-ph</span>
+                <span>🔗 2602.12647</span>
+            </div>
+            <div class="paper-abstract">Radio relics in merging galaxy clusters are widely interpreted as synchrotron emission from relativistic electrons accelerated at large-scale shocks. However, the efficiency of diffusive shock acceler...</div>
+            
+            <button class="save-btn" onclick="savePaper('2602.12647', `Ballistic Surfing Acceleration as a Coherent Mechanism for Electron Acceleration in Galaxy Cluster Shocks`, 'https://arxiv.org/abs/2602.12647')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#25</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.23466" target="_blank">Neutron Star Mass-Radius Constraints for EXO 0748$-$676 from 2008-2025 Quiescent X-ray Spectra</a></div>
+            <div class="paper-meta">
+                <span>📝 Mingyang Wang, Guobao Zhang, Ang Li</span>
+                <span>🏷️ astro-ph.HE, astro-ph.SR, nucl-th</span>
+                <span>🔗 2606.23466</span>
+            </div>
+            <div class="paper-abstract">We present new constraints on the mass and radius of the neutron star in the neutron star low-mass X-ray binary EXO 0748$-$676 obtained from a joint analysis of 20 quiescent X-ray observations obtaine...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.23466', `Neutron Star Mass-Radius Constraints for EXO 0748$-$676 from 2008-2025 Quiescent X-ray Spectra`, 'https://arxiv.org/abs/2606.23466')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#26</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2607.04196" target="_blank">Probing Flare-Associated Eruptions on AB Doradus via X-ray Absorption Variations</a></div>
+            <div class="paper-meta">
+                <span>📝 Shweta Didel, Jeewan C Pandey, Abhishekh K Srivastava</span>
+                <span>🏷️ astro-ph.SR, astro-ph.HE</span>
+                <span>🔗 2607.04196</span>
+            </div>
+            <div class="paper-abstract">In this work, we investigate eruptive phenomena associated with X-ray flares on AB Doradus using observations from XMM-Newton. Our aim is to detect such events with the help of continuous X-ray absorp...</div>
+            
+            <button class="save-btn" onclick="savePaper('2607.04196', `Probing Flare-Associated Eruptions on AB Doradus via X-ray Absorption Variations`, 'https://arxiv.org/abs/2607.04196')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#27</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2603.07620" target="_blank">A jet formation model for astrophysical objects</a></div>
+            <div class="paper-meta">
+                <span>📝 Chun Xu</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2603.07620</span>
+            </div>
+            <div class="paper-abstract">We propose a unified model for jet formation applicable to active galactic nuclei, young stellar objects, and X-ray binaries. In this model, the binding energy released from the accretion disk is prim...</div>
+            
+            <button class="save-btn" onclick="savePaper('2603.07620', `A jet formation model for astrophysical objects`, 'https://arxiv.org/abs/2603.07620')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#28</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2510.11783" target="_blank">Quasinormal modes from numerical relativity with Bayesian inference</a></div>
+            <div class="paper-meta">
+                <span>📝 Richard Dyer, Christopher J. Moore</span>
+                <span>🏷️ gr-qc, astro-ph.HE</span>
+                <span>🔗 2510.11783</span>
+            </div>
+            <div class="paper-abstract">Numerical relativity (NR) enables the study of physics in strong and dynamical gravitational fields and provides predictions for the gravitational-wave signals produced by merging black holes. Despite...</div>
+            
+            <button class="save-btn" onclick="savePaper('2510.11783', `Quasinormal modes from numerical relativity with Bayesian inference`, 'https://arxiv.org/abs/2510.11783')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#29</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.29510" target="_blank">Radial oscillations of quark stars in light of current astrophysical constraints: A comparative study</a></div>
+            <div class="paper-meta">
+                <span>📝 G. Panotopoulos, A. Rincon, I. Lopes</span>
+                <span>🏷️ gr-qc, astro-ph.HE, astro-ph.SR</span>
+                <span>🔗 2606.29510</span>
+            </div>
+            <div class="paper-abstract">We investigate the structural and oscillatory properties of isotropic strange quark stars within General Relativity, focusing on three physically motivated equations of state: the color flavor locked ...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.29510', `Radial oscillations of quark stars in light of current astrophysical constraints: A comparative study`, 'https://arxiv.org/abs/2606.29510')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#30</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2512.18401" target="_blank">Energy-Dependent Shifts of Medium-Scale Anisotropies in Very-High-Energy Cosmic Rays Observed by LHAASO-KM2A</a></div>
+            <div class="paper-meta">
+                <span>📝 The LHAASO collabration, Zhen Cao, F. Aharonian, Y. X. Bai, Y. W. Bao</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2512.18401</span>
+            </div>
+            <div class="paper-abstract">Small deviations from isotropy in the arrival directions of Galactic cosmic rays serve as a unique probe of the local magnetic environment. In this Letter, we report observations of medium-scale aniso...</div>
+            
+            <button class="save-btn" onclick="savePaper('2512.18401', `Energy-Dependent Shifts of Medium-Scale Anisotropies in Very-High-Energy Cosmic Rays Observed by LHAASO-KM2A`, 'https://arxiv.org/abs/2512.18401')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#31</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.17098" target="_blank">What an Amortized X-ray Posterior Cannot See: Gain Shifts, Silent Miscalibration, and the Limits of the Evidence Check</a></div>
+            <div class="paper-meta">
+                <span>📝 Karan Akbari</span>
+                <span>🏷️ astro-ph.HE, astro-ph.IM</span>
+                <span>🔗 2606.17098</span>
+            </div>
+            <div class="paper-abstract">Neural posterior estimation (NPE) gives X-ray spectral fits a posterior in milliseconds instead of the minutes nested sampling costs, but without its calibration guarantee or goodness-of-fit. Simulati...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.17098', `What an Amortized X-ray Posterior Cannot See: Gain Shifts, Silent Miscalibration, and the Limits of the Evidence Check`, 'https://arxiv.org/abs/2606.17098')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#32</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2511.15542" target="_blank">Is There New Physics Beyond 30 TeV in the BOAT?</a></div>
+            <div class="paper-meta">
+                <span>📝 Filip Rescic, Luis Recabarren Vergara, Michele Doro, Tomislav Terzić</span>
+                <span>🏷️ astro-ph.HE, hep-ph</span>
+                <span>🔗 2511.15542</span>
+            </div>
+            <div class="paper-abstract">We show that the GRB 221009A spectrum detected by LHAASO can be used to probe effects of quadratic subluminal Lorentz Invariance Violation (LIV) through the enhancement of the observed flux at the hig...</div>
+            
+            <button class="save-btn" onclick="savePaper('2511.15542', `Is There New Physics Beyond 30 TeV in the BOAT?`, 'https://arxiv.org/abs/2511.15542')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#33</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2512.11425" target="_blank">Measurement of the cosmic ray nickel energy spectrum from 10 GeV/n to 2 TeV/n with the DAMPE</a></div>
+            <div class="paper-meta">
+                <span>📝 F. Alemanno, Q. An, P. Azzarello, F. C. T. Barbato, P. Bernardini</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2512.11425</span>
+            </div>
+            <div class="paper-abstract">Nickel, one of the most stable elements alongside iron, is the most abundant heavy element beyond iron in cosmic rays. With DAMPE's excellent charge resolution and broad energy range, a high-precision...</div>
+            
+            <button class="save-btn" onclick="savePaper('2512.11425', `Measurement of the cosmic ray nickel energy spectrum from 10 GeV/n to 2 TeV/n with the DAMPE`, 'https://arxiv.org/abs/2512.11425')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#34</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2512.12616" target="_blank">A Search for Hard X-ray/Soft $γ$-ray Emission from SPT-CL J2012-5649 (Abell 3667) Using INTEGRAL/ISGRI</a></div>
+            <div class="paper-meta">
+                <span>📝 Siddhant Manna, Shantanu Desai, Roman A. Krivonos</span>
+                <span>🏷️ astro-ph.HE, astro-ph.CO</span>
+                <span>🔗 2512.12616</span>
+            </div>
+            <div class="paper-abstract">We present a search for hard X-ray/soft $γ$-ray emission from the merging galaxy cluster SPT-CL J2012-5649 (Abell~3667) using archival INTEGRAL/ISGRI observations. This cluster located at $z=0.0556$ h...</div>
+            
+            <button class="save-btn" onclick="savePaper('2512.12616', `A Search for Hard X-ray/Soft $γ$-ray Emission from SPT-CL J2012-5649 (Abell 3667) Using INTEGRAL/ISGRI`, 'https://arxiv.org/abs/2512.12616')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#35</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.16796" target="_blank">A HINSA view of cosmic-ray ionization in IC 348 and NGC 1333: evidence for a strong low-energy cosmic-ray disparity</a></div>
+            <div class="paper-meta">
+                <span>📝 Gan Luo, Marco Padovani, Daniele Galli, Thomas G. Bisbas, Brandt A. L. Gaches</span>
+                <span>🏷️ astro-ph.GA, astro-ph.HE</span>
+                <span>🔗 2606.16796</span>
+            </div>
+            <div class="paper-abstract">The cosmic-ray ionization rate (CRIR) is one of the fundamental parameters influencing the chemical and dynamical evolution of molecular clouds. Although observations in recent years have revealed hig...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.16796', `A HINSA view of cosmic-ray ionization in IC 348 and NGC 1333: evidence for a strong low-energy cosmic-ray disparity`, 'https://arxiv.org/abs/2606.16796')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#36</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2604.12496" target="_blank">Interaction-powered Type Ibn Supernovae as a Transient PeVatron Candidate: The Case of SN 2023uqf</a></div>
+            <div class="paper-meta">
+                <span>📝 Ryo Sawada, Yusuke Inoue, Yosuke Ashida</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2604.12496</span>
+            </div>
+            <div class="paper-abstract">We investigate whether the Type Ibn supernova SN 2023uqf, reported close in time and direction to the $\sim$442 TeV IceCube alert IC-231004A, is physically consistent with a shock--circumstellar mediu...</div>
+            
+            <button class="save-btn" onclick="savePaper('2604.12496', `Interaction-powered Type Ibn Supernovae as a Transient PeVatron Candidate: The Case of SN 2023uqf`, 'https://arxiv.org/abs/2604.12496')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#37</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.25164" target="_blank">Dust destruction signals shock-accelerated outflows in the nearby active galaxy NGC 1068</a></div>
+            <div class="paper-meta">
+                <span>📝 Luke R. Holden, Clive N. Tadhunter, Daniel J. B. Smith, Martin A. Bourne, Marina I. Arnaudova</span>
+                <span>🏷️ astro-ph.GA, astro-ph.HE</span>
+                <span>🔗 2606.25164</span>
+            </div>
+            <div class="paper-abstract">Massive gas outflows driven by active galactic nuclei (AGN) are a key ingredient in models of galaxy evolution, in which they are required to regulate star formation and thus explain the observed prop...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.25164', `Dust destruction signals shock-accelerated outflows in the nearby active galaxy NGC 1068`, 'https://arxiv.org/abs/2606.25164')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#38</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.26702" target="_blank">Interferometric Analysis of Air-shower Radio Emission in the Near Field with an Information Field Theory Approach</a></div>
+            <div class="paper-meta">
+                <span>📝 Keito Watanabe, Karen Terveer, Sjoerd Bouma, Justin Bray, Stijn Buitink</span>
+                <span>🏷️ astro-ph.IM, astro-ph.HE</span>
+                <span>🔗 2606.26702</span>
+            </div>
+            <div class="paper-abstract">Current reconstruction techniques for air-shower radio emission generated by cosmic rays have shown great success, having been applied to several radio detectors over the last decade. Nevertheless, th...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.26702', `Interferometric Analysis of Air-shower Radio Emission in the Near Field with an Information Field Theory Approach`, 'https://arxiv.org/abs/2606.26702')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#39</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2510.23945" target="_blank">Cosmological Evolution of Gamma Ray Bursts</a></div>
+            <div class="paper-meta">
+                <span>📝 Sujay Champati, Vahé Petrosian, Maria G. Dainotti</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2510.23945</span>
+            </div>
+            <div class="paper-abstract">Gamma-ray bursts (GRBs) are classified as long (LGRBs) and short (SGRBs), with collapsars and compact-object mergers (NS-NS or NS-Black Holes) as progenitors, respectively. LGRBs are expected to follo...</div>
+            
+            <button class="save-btn" onclick="savePaper('2510.23945', `Cosmological Evolution of Gamma Ray Bursts`, 'https://arxiv.org/abs/2510.23945')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#40</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2603.15028" target="_blank">Investigating the Temporal Evolution of Gamma-Ray Burst Central Engine Parameters Based on Numerical Simulations</a></div>
+            <div class="paper-meta">
+                <span>📝 Wei-Hua Lei</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2603.15028</span>
+            </div>
+            <div class="paper-abstract">A hyperaccreting stellar-mass black hole (BH) has been proposed as the candidate central engine of gamma-ray bursts (GRBs). Comparing the predictions from the central engine models with the temporal b...</div>
+            
+            <button class="save-btn" onclick="savePaper('2603.15028', `Investigating the Temporal Evolution of Gamma-Ray Burst Central Engine Parameters Based on Numerical Simulations`, 'https://arxiv.org/abs/2603.15028')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#41</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2508.16924" target="_blank">Gamma-ray burst light curve reconstruction with predictive models</a></div>
+            <div class="paper-meta">
+                <span>📝 Zhunuskanov A., Sakan A., Akhmetali A., Zaidyn M., Ussipov N</span>
+                <span>🏷️ astro-ph.HE, astro-ph.IM</span>
+                <span>🔗 2508.16924</span>
+            </div>
+            <div class="paper-abstract">Gamma-ray bursts represent some of the most energetic and complex phenomena in the universe, characterized by highly variable light curves that often contain observational gaps. Reconstructing these l...</div>
+            
+            <button class="save-btn" onclick="savePaper('2508.16924', `Gamma-ray burst light curve reconstruction with predictive models`, 'https://arxiv.org/abs/2508.16924')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#42</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.28755" target="_blank">Radio Galaxies and Jet Duty Cycles</a></div>
+            <div class="paper-meta">
+                <span>📝 M. J. Hardcastle, C. Konar, S. Dutta, D. V. Lal, R. D. Baldi</span>
+                <span>🏷️ astro-ph.GA, astro-ph.HE</span>
+                <span>🔗 2606.28755</span>
+            </div>
+            <div class="paper-abstract">Radio-luminous active galactic nuclei, or radio galaxies, are the brightest population of objects in the extragalactic radio sky and will be seen in large numbers in essentially every SKA observation....</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.28755', `Radio Galaxies and Jet Duty Cycles`, 'https://arxiv.org/abs/2606.28755')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#43</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.25028" target="_blank">Constraining the Physical Properties of Quadruply Lensed Quasars using Optical-to-X-Ray Data</a></div>
+            <div class="paper-meta">
+                <span>📝 Kriti Kamal Gupta, Dominique Sluse, Maarten Baes, Daniel Gilman, Tommaso Treu</span>
+                <span>🏷️ astro-ph.GA, astro-ph.HE</span>
+                <span>🔗 2606.25028</span>
+            </div>
+            <div class="paper-abstract">Gravitational lensing of luminous active galactic nuclei (AGN; or quasars) can be used as a natural telescope to zoom in on their inner structures. With more and more lensed AGN being discovered, it i...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.25028', `Constraining the Physical Properties of Quadruply Lensed Quasars using Optical-to-X-Ray Data`, 'https://arxiv.org/abs/2606.25028')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#44</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2506.14519" target="_blank">FAST Pulsar Database: II. Scattering profiles of 149 Pulsars</a></div>
+            <div class="paper-meta">
+                <span>📝 W. C. Jing, J. L. Han, C. Wang, P. F. Wang, T. Wang</span>
+                <span>🏷️ astro-ph.HE, astro-ph.GA</span>
+                <span>🔗 2506.14519</span>
+            </div>
+            <div class="paper-abstract">The turbulent ionized interstellar medium diffracts radio waves and makes them propagate in multiple paths. The pulse-broadening observed at low frequencies results from the scattering effect of inter...</div>
+            
+            <button class="save-btn" onclick="savePaper('2506.14519', `FAST Pulsar Database: II. Scattering profiles of 149 Pulsars`, 'https://arxiv.org/abs/2506.14519')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#45</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2601.20964" target="_blank">Early results in the search for extreme coronal line emitters with the Dark Energy Spectroscopic Instrument</a></div>
+            <div class="paper-meta">
+                <span>📝 Peter Clark, Joseph Callow, Or Graur, Alexei V. Filippenko, Thomas G. Brink</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2601.20964</span>
+            </div>
+            <div class="paper-abstract">Here we present the results of our search through the Early Data Release (EDR) of the Dark Energy Spectroscopic Instrument (DESI) for extreme coronal line emitters (ECLEs) - a rare classification of g...</div>
+            
+            <button class="save-btn" onclick="savePaper('2601.20964', `Early results in the search for extreme coronal line emitters with the Dark Energy Spectroscopic Instrument`, 'https://arxiv.org/abs/2601.20964')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#46</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2604.21224" target="_blank">Geometry, Not Calorimetry, Drives the Radio/Infrared/Gamma-Ray Correlation</a></div>
+            <div class="paper-meta">
+                <span>📝 Troy A. Porter, Igor V. Moskalenko, Gudlaugur Johannesson</span>
+                <span>🏷️ astro-ph.HE, astro-ph.GA</span>
+                <span>🔗 2604.21224</span>
+            </div>
+            <div class="paper-abstract">We investigate whether the observed radio-infrared-$γ$-ray correlation in star-forming galaxies is a geometric effect rather than a signature of local cosmic-ray (CR) calorimetry. Using the GALPROP fr...</div>
+            
+            <button class="save-btn" onclick="savePaper('2604.21224', `Geometry, Not Calorimetry, Drives the Radio/Infrared/Gamma-Ray Correlation`, 'https://arxiv.org/abs/2604.21224')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#47</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2607.01325" target="_blank">TEQUILA: Mechanism-free polarimetry for astronomy</a></div>
+            <div class="paper-meta">
+                <span>📝 Alan M. Watson, Noémie Globus</span>
+                <span>🏷️ astro-ph.IM, astro-ph.HE</span>
+                <span>🔗 2607.01325</span>
+            </div>
+            <div class="paper-abstract">TEQUILA (Transient Event $Q$, $U$, and $I$ Light Analyzer) is an optical imaging polarimeter developed for the second Nasmyth port of the 1.3-m COLIBRÍ altitude-azimuth telescope at Observatorio Astro...</div>
+            
+            <button class="save-btn" onclick="savePaper('2607.01325', `TEQUILA: Mechanism-free polarimetry for astronomy`, 'https://arxiv.org/abs/2607.01325')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#48</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.28286" target="_blank">JWST observations support the jittering-jets explosion mechanism (JJEM) for the core-collapse supernova remnant SNR 0540-69.3</a></div>
+            <div class="paper-meta">
+                <span>📝 Dmitry Shishkin, Noam Soker</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2606.28286</span>
+            </div>
+            <div class="paper-abstract">We examine published JWST observations of the core-collapse supernova (CCSN) remnant SNR 0540-69.3 and identify a point-symmetric morphology in its inner ejecta. Within the framework of the jittering ...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.28286', `JWST observations support the jittering-jets explosion mechanism (JJEM) for the core-collapse supernova remnant SNR 0540-69.3`, 'https://arxiv.org/abs/2606.28286')">📖 Save to Reading List</button>
+        </div>
+        <div class="paper-card">
+            <div class="paper-header">
+                <span class="rank">#49</span>
+                <div class="score-bar" style="width: 0%; background: #e74c3c;"></div>
+                <span class="score">0/100</span>
+            </div>
+            <div class="paper-title"><a href="https://arxiv.org/abs/2606.18468" target="_blank">Short-Duration Gamma-ray Burst and Afterglow Rates in the Rubin and Roman Era</a></div>
+            <div class="paper-meta">
+                <span>📝 Tzvetelina Dimitrova, Nathaniel Butler</span>
+                <span>🏷️ astro-ph.HE</span>
+                <span>🔗 2606.18468</span>
+            </div>
+            <div class="paper-abstract">Short-duration gamma-ray burst (sGRB) afterglows that follow BNS-gravitational wave (GW) events are essential for understanding the tension between the observed sGRB rate and BNS merger rate, heighten...</div>
+            
+            <button class="save-btn" onclick="savePaper('2606.18468', `Short-Duration Gamma-ray Burst and Afterglow Rates in the Rubin and Roman Era`, 'https://arxiv.org/abs/2606.18468')">📖 Save to Reading List</button>
+        </div>
+    </div>
+
+    <script>
+        const scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        new Chart(document.getElementById('scoreChart'), {
+            type: 'bar',
+            data: {
+                labels: scores.map((_, i) => '#' + (i+1)),
+                datasets: [{
+                    label: 'Relevance Score',
+                    data: scores,
+                    backgroundColor: scores.map(s => s >= 70 ? '#27ae60' : s >= 40 ? '#f39c12' : '#e74c3c'),
+                    borderRadius: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, max: 100, grid: { color: '#2a2a5e' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        function savePaper(id, title, link) {
+            let list = JSON.parse(localStorage.getItem('arxivReadingList') || '[]');
+            if (!list.find(p => p.id === id)) {
+                list.push({ id, title, link, date: new Date().toISOString().split('T')[0] });
+                localStorage.setItem('arxivReadingList', JSON.stringify(list));
+                alert('✅ Saved to reading list!');
+            } else {
+                alert('Already in your reading list.');
+            }
+        }
+    </script>
+</body>
+</html>

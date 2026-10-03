@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArXiv Reading List</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f0f23; color: #e0e0e0; padding: 20px; max-width: 800px; margin: 0 auto; }
+        h1 { color: #fff; margin-bottom: 20px; }
+        .paper { background: #1a1a3e; border: 1px solid #2a2a5e; border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .paper a { color: #85c1e9; text-decoration: none; flex: 1; }
+        .paper a:hover { text-decoration: underline; }
+        .paper .date { color: #8899aa; font-size: 0.8em; }
+        .remove-btn { background: transparent; border: 1px solid #e74c3c; color: #e74c3c; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
+        .remove-btn:hover { background: #e74c3c; color: white; }
+        .clear-btn { background: transparent; border: 1px solid #8899aa; color: #8899aa; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 0.85em; margin-bottom: 15px; }
+        .empty { color: #8899aa; text-align: center; padding: 40px; }
+        .nav a { color: #85c1e9; text-decoration: none; display: inline-block; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="nav"><a href="index.html">← Archive</a></div>
+    <h1>📖 Reading List</h1>
+    <button class="clear-btn" onclick="clearAll()">🗑️ Clear All</button>
+    <div id="list"></div>
+    <script>
+        function render() {
+            const list = JSON.parse(localStorage.getItem('arxivReadingList') || '[]');
+            const container = document.getElementById('list');
+            if (list.length === 0) {
+                container.innerHTML = '<div class="empty">Nothing saved yet. Open a monthly report and click "Save to Reading List".</div>';
+                return;
+            }
+            container.innerHTML = list.map((p, i) =>
+                `<div class="paper">
+                    <span class="date">${p.date || ''}</span>
+                    <a href="${p.link}" target="_blank">${p.title}</a>
+                    <button class="remove-btn" onclick="remove(${i})">✕</button>
+                </div>`
+            ).join('');
+            sync();
+        }
+        function remove(i) {
+            let list = JSON.parse(localStorage.getItem('arxivReadingList') || '[]');
+            list.splice(i, 1);
+            localStorage.setItem('arxivReadingList', JSON.stringify(list));
+            render();
+        }
+        function clearAll() {
+            if (confirm('Clear all items?')) {
+                localStorage.removeItem('arxivReadingList');
+                render();
+            }
+        }
+        function sync() {
+            const list = JSON.parse(localStorage.getItem('arxivReadingList') || '[]');
+            window.opener && window.opener.postMessage({ type: 'arxiv_reading_list_sync_full', list }, '*');
+        }
+        render();
+    </script>
+</body>
+</html>
